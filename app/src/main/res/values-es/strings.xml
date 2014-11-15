@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Reservar Un Cuarto</string>
+    <string name="room_418">Habitación 418</string>
+    <string name="room_419">Habitación 419</string>
+    <string name="room_420">Habitación 420</string>
+    <string name="room_421">Habitación 421</string>
+    <string name="test_room">Habitación de ensayo</string>
+    <string name="title_room_detail">Información de la habitación</string>
+    <string name="scanner_1">Escáner 1 de el 3er piso</string>
+    <string name="scanner">Escáner</string>
+    <string name="scanner_2">Escáner 2 de el 3er piso</string>
+    <string name="scanner_3">Escáner de la 4ª piso</string>
+    <string name="instructions">Oprima un elemento en la lista de la izquierda para comenzar.</string>
+</resources>

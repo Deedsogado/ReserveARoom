@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ReserveARoom</string>
+    <string name="title_room_detail">Room Detail</string>
+    <!-- These are used in RoomListSampleContent -->
+    <string name="room_418">Room 418</string>
+    <string name="room_419">Room 419</string>
+    <string name="room_420">Room 420</string>
+    <string name="room_421">Room 421</string>
+    <string name="scanner">Scanner </string>
+    <string name="scanner_1">3rd floor scanner 1</string>
+    <string name="scanner_2">3rd floor scanner 2</string>
+    <string name="scanner_3">4th floor scanner</string>
+    <string name="test_room">Test room</string>
+    <string name="instructions">Press an item in the list on the left to begin.</string>
+
+</resources>
