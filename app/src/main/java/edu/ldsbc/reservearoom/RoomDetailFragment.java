@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,8 +21,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import edu.ldsbc.reservearoom.dummy.App;
-import edu.ldsbc.reservearoom.dummy.CaldroidCustomAdapter;
 import edu.ldsbc.reservearoom.dummy.RoomListSampleContent;
+import edu.ldsbc.reservearoom.dummy.TimeAdapter;
+import edu.ldsbc.reservearoom.dummy.TimeListSampleContent;
 
 /**
  * A fragment representing a single Room detail screen.
@@ -33,6 +36,8 @@ public class RoomDetailFragment extends Fragment {
     CaldroidFragment calDroid = new CaldroidFragment();
     Bundle args = new Bundle();
     Calendar cal = Calendar.getInstance();
+    Date selectedDate = cal.getTime(); // will be Date for currently selected date. update inside onSelectDate();
+    String selectedDateAsLong = "SelectedDateAsLong";
 
     /**
      * The fragment argument representing the item ID that this fragment
@@ -56,7 +61,7 @@ public class RoomDetailFragment extends Fragment {
 
 
     /** Create listener for Caldroid. not declared in activity because methods are overloaded
-     * inside the listener, not the activity. if we need the activity as context to do something, use
+     * inside the listener, not the activity. If we need the activity as context to do something, use
      * getActivity() **/
 
     final CaldroidListener listener = new CaldroidListener() {
@@ -70,10 +75,7 @@ public class RoomDetailFragment extends Fragment {
             // set color of newly selected cell
             calDroid.clearSelectedDates();
             calDroid.setSelectedDates(date, date);
-            calDroid.getExtraData().put("SELECTEDDATES", date);
-
-
-        //    calDroid.setBackgroundResourceForDate(R.color.caldroid_black, date);
+            selectedDate = date;
             calDroid.refreshView();
 
             // make TextView above change to the date chosen.
@@ -100,6 +102,10 @@ public class RoomDetailFragment extends Fragment {
 
         @Override // happens on screen rotations and when room is selected.
         public void onCaldroidViewCreated() {
+            calDroid.setSelectedDates(selectedDate, selectedDate);
+            calDroid.refreshView();
+            TextView roomDetailText = (TextView) getActivity().findViewById(R.id.room_detail);
+            roomDetailText.setText(simpleDateFormat.format(selectedDate));
             Toast.makeText(getActivity(),
                     "Caldroid view is created",
                     Toast.LENGTH_SHORT).show();
@@ -122,6 +128,9 @@ public class RoomDetailFragment extends Fragment {
         if (savedInstanceState != null) {
             calDroid.restoreStatesFromKey(savedInstanceState,
                     "CALDROID_SAVED_STATE");
+            long savedSelectedDate = savedInstanceState.getLong(selectedDateAsLong);
+            selectedDate.setTime(savedSelectedDate);
+            calDroid.refreshView();
         }
 
         // If activity is created from fresh
@@ -144,13 +153,23 @@ public class RoomDetailFragment extends Fragment {
 
         // Show today's date in the TextView.
         ((TextView) rootView.findViewById(R.id.room_detail)).setText(simpleDateFormat.format(new Date()));
-    //    if (mItem != null) {
-    //        ((TextView) rootView.findViewById(R.id.room_detail)).setText(mItem.content);
-    //    }
 
-        // Show Calendar and time in top bar.
+        // Show items in the ListView
+        ((ListView) rootView.findViewById(R.id.listView)).setAdapter(new TimeAdapter<TimeListSampleContent.TimeListItem>(
+                getActivity(),
+                R.layout.time_list_item, // id of the list item layout.
+                R.id.hour,  // id of textView inside our list item layout (hour)
+                R.id.reservable,
+                R.id.plus,
+                TimeListSampleContent.ITEMS)); // Here is where we specify where the data is coming from.
+
+        // Show Calendar and time in top bar of Caldroid.
+        // Actually, this is simply telling Caldroid what today's month and day is when it launches.
+        cal.setTime(selectedDate);
         args.putInt(CaldroidFragment.MONTH, cal.get(Calendar.MONTH) + 1);
         args.putInt(CaldroidFragment.YEAR, cal.get(Calendar.YEAR));
+//        args.putBoolean(CaldroidFragment.SIX_WEEKS_IN_CALENDAR, false);
+//        args.putBoolean(CaldroidFragment.SQUARE_TEXT_VIEW_CELL, true);
         calDroid.setArguments(args);
 
         // Link caldroid in the fragment to the listener, either in RoomListActivity or RoomDetailActivity
@@ -174,6 +193,8 @@ public class RoomDetailFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         if (calDroid != null) {
+
+            outState.putLong(selectedDateAsLong, selectedDate.getTime());
             calDroid.saveStatesToKey(outState, "CALDROID_SAVED_STATE");
         }
 

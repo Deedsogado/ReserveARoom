@@ -21,10 +21,10 @@ import edu.ldsbc.reservearoom.R;
 public class RoomListSampleContent {
 
     /** An array of roomList items. */
-    public static List<RoomListItem> ITEMS = new ArrayList<RoomListItem>();
+    public static ArrayList<RoomListItem> ITEMS = new ArrayList<RoomListItem>();
 
     /** A map of roomList items, by ID. */
-    public static Map<String, RoomListItem> ITEM_MAP = new HashMap<String, RoomListItem>();
+    public static HashMap<String, RoomListItem> ITEM_MAP = new HashMap<String, RoomListItem>();
 
     /* The adapter is never constructed or called, it's ITEMS list is just accessed.
    * that's why it's empty when we run the app. so, we put database and network calls
@@ -109,6 +109,11 @@ public class RoomListSampleContent {
         public RoomListItem(int id, String content) {
             this.id = String.valueOf(id);
             this.content = content;
+        }
+
+        public static RoomListItem get(int position) {
+
+            return ITEM_MAP.get(((Integer)position).toString());
         }
 
         @Override
