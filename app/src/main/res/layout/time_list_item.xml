@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/hour"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="hour"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:gravity="center_vertical"
+        android:height="40dp"
+        android:background="#FFFFFF"
+        />
+    <TextView
+        android:id="@+id/reservable"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="reservable"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:gravity="center_vertical|center_horizontal"
+        android:height="40dp"
+        />
+    <TextView
+        android:id="@+id/plus"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="="
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:height="40dp"
+        android:gravity="center_vertical"
+        />
+
+</LinearLayout>

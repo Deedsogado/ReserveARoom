@@ -51,6 +51,8 @@ public class RoomListActivity extends FragmentActivity
         }
 
         // TODO: If exposing deep links into your app, handle intents here.
+
+
     }
 
     /**
@@ -63,9 +65,6 @@ public class RoomListActivity extends FragmentActivity
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
-            // Hides the instructions TextView once an item is chosen.
-            TextView instructions = (TextView) findViewById(R.id.instructions);
-            instructions.setVisibility(TextView.INVISIBLE);
             Bundle arguments = new Bundle();
             arguments.putString(RoomDetailFragment.ARG_ITEM_ID, id);
             RoomDetailFragment fragment = new RoomDetailFragment();

@@ -12,6 +12,6 @@
     <string name="scanner_2">3rd floor scanner 2</string>
     <string name="scanner_3">4th floor scanner</string>
     <string name="test_room">Test room</string>
-    <string name="instructions">Press an item in the list on the left to begin.</string>
+
 
 </resources>
