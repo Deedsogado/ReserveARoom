@@ -1,13 +1,12 @@
 package edu.ldsbc.reservearoom;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import edu.ldsbc.reservearoom.dummy.App;
 import edu.ldsbc.reservearoom.dummy.RoomListSampleContent;
 import edu.ldsbc.reservearoom.dummy.TimeAdapter;
 import edu.ldsbc.reservearoom.dummy.TimeListSampleContent;
@@ -38,6 +36,7 @@ public class RoomDetailFragment extends Fragment {
     Calendar cal = Calendar.getInstance();
     Date selectedDate = cal.getTime(); // will be Date for currently selected date. update inside onSelectDate();
     String selectedDateAsLong = "SelectedDateAsLong";
+
 
     /**
      * The fragment argument representing the item ID that this fragment
@@ -150,18 +149,43 @@ public class RoomDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_room_detail, container, false);
+        ListView listView = (ListView) rootView.findViewById(R.id.listView);
 
         // Show today's date in the TextView.
         ((TextView) rootView.findViewById(R.id.room_detail)).setText(simpleDateFormat.format(new Date()));
 
         // Show items in the ListView
-        ((ListView) rootView.findViewById(R.id.listView)).setAdapter(new TimeAdapter<TimeListSampleContent.TimeListItem>(
+        listView.setAdapter(new TimeAdapter<TimeListSampleContent.TimeListItem>(
                 getActivity(),
                 R.layout.time_list_item, // id of the list item layout.
                 R.id.hour,  // id of textView inside our list item layout (hour)
                 R.id.reservable,
                 R.id.plus,
                 TimeListSampleContent.ITEMS)); // Here is where we specify where the data is coming from.
+
+        // Now that the items are loaded, turn off the buttons in the non-reservable time slots.
+        int numberOfTimeSlots = listView.getCount();
+        for(int i =0; i < numberOfTimeSlots; i++) {
+            TimeListSampleContent.TimeListItem timeSlot = (TimeListSampleContent.TimeListItem) listView.getItemAtPosition(i);
+
+            // if slot is not reservable, disable it's button.
+            if (!timeSlot.reservable) {
+                listView.getChildAt(i).setEnabled(false);
+            }
+        }
+
+        // Now make list items do things when clicked.
+        listView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // launch new activity to verify results of room, date, and time chosen.
+                Intent launchVerifyActivity = new Intent( );
+                Intent detailIntent = new Intent(this, RoomDetailActivity.class);
+                detailIntent.putExtra(RoomDetailFragment.ARG_ITEM_ID, id);
+                startActivity(detailIntent);
+
+            }
+        });
 
         // Show Calendar and time in top bar of Caldroid.
         // Actually, this is simply telling Caldroid what today's month and day is when it launches.
@@ -173,6 +197,7 @@ public class RoomDetailFragment extends Fragment {
         calDroid.setArguments(args);
 
         // Link caldroid in the fragment to the listener, either in RoomListActivity or RoomDetailActivity
+        //(actually it's defined in this file, not the activities.)
         calDroid.setCaldroidListener(listener);
 
         FragmentActivity act = (FragmentActivity) getActivity();
