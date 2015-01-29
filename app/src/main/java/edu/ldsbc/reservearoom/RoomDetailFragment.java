@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,7 +83,8 @@ public class RoomDetailFragment extends Fragment {
             TextView roomDetailText = (TextView) getActivity().findViewById(R.id.room_detail);
             roomDetailText.setText(simpleDateFormat.format(date));
 
-            // TODO: add selected date to the bundle to be passed to the next fragment.
+            // Add selected date to bundle to be passed along later.
+            getActivity().getIntent().putExtra("vDate", simpleDateFormat.format(selectedDate));
 
         }
 
@@ -108,6 +111,9 @@ public class RoomDetailFragment extends Fragment {
             Toast.makeText(getActivity(),
                     "Caldroid view is created",
                     Toast.LENGTH_SHORT).show();
+
+            // Add selected date to bundle to be passed along later.
+            getActivity().getIntent().putExtra("vDate", simpleDateFormat.format(selectedDate));
         }
 
     };
@@ -147,12 +153,46 @@ public class RoomDetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_room_detail, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listView);
 
         // Show today's date in the TextView.
         ((TextView) rootView.findViewById(R.id.room_detail)).setText(simpleDateFormat.format(new Date()));
+
+        // Now make list items do things when clicked.
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id) {
+                // get actual object.
+                TimeListSampleContent.TimeListItem timeSlot = (TimeListSampleContent.TimeListItem) parent.getItemAtPosition(position);
+                // Only do things if the time is reservable.
+                if (timeSlot.reservable) {
+                    // prepare the time to pass in intent later.
+                    TextView textView = (TextView) itemClicked.findViewById(R.id.hour);
+                    String time = textView.getText().toString();
+                    // launch new activity to verify results of room, date, and time chosen.
+                    Intent launchVerifyActivity = new Intent(getActivity(), RoomVerifyActivity.class);
+                    Intent passedAlong = getActivity().getIntent();
+
+                    // on tablets, passedAlong was never passed (no new activity launched).
+                    // the selected room is in fragment's arguments instead of activity's bundle.
+
+                    launchVerifyActivity.putExtra("vRoom", RoomListSampleContent.ITEM_MAP.get(getArguments()
+                           .getString(RoomDetailFragment.ARG_ITEM_ID)).toString()); //Room
+
+                    launchVerifyActivity.putExtra("vDate",
+                            passedAlong.getStringExtra("vDate")); //added to passedAlong by listener.onSelectDate();
+
+                    launchVerifyActivity.putExtra("vTime",
+                            time);
+
+                    startActivity(launchVerifyActivity);
+                } else {
+                    Log.i("ReserveARoom", "Time is not reservable.");
+                }
+            }
+        });
 
         // Show items in the ListView
         listView.setAdapter(new TimeAdapter<TimeListSampleContent.TimeListItem>(
@@ -162,30 +202,6 @@ public class RoomDetailFragment extends Fragment {
                 R.id.reservable,
                 R.id.plus,
                 TimeListSampleContent.ITEMS)); // Here is where we specify where the data is coming from.
-
-        // Now that the items are loaded, turn off the buttons in the non-reservable time slots.
-        int numberOfTimeSlots = listView.getCount();
-        for(int i =0; i < numberOfTimeSlots; i++) {
-            TimeListSampleContent.TimeListItem timeSlot = (TimeListSampleContent.TimeListItem) listView.getItemAtPosition(i);
-
-            // if slot is not reservable, disable it's button.
-            if (!timeSlot.reservable) {
-                listView.getChildAt(i).setEnabled(false);
-            }
-        }
-
-        // Now make list items do things when clicked.
-        listView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // launch new activity to verify results of room, date, and time chosen.
-                Intent launchVerifyActivity = new Intent( );
-                Intent detailIntent = new Intent(this, RoomDetailActivity.class);
-                detailIntent.putExtra(RoomDetailFragment.ARG_ITEM_ID, id);
-                startActivity(detailIntent);
-
-            }
-        });
 
         // Show Calendar and time in top bar of Caldroid.
         // Actually, this is simply telling Caldroid what today's month and day is when it launches.

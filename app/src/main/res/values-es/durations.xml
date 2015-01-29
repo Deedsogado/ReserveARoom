@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="durations">
+        <item>0.5 horas</item>
+        <item>1 hora</item>
+        <item>1.5 horas</item>
+        <item>2 horas</item>
+    </string-array>
+</resources>

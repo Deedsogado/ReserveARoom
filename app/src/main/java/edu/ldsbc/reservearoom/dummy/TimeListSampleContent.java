@@ -1,6 +1,8 @@
 package edu.ldsbc.reservearoom.dummy;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +14,7 @@ import edu.ldsbc.reservearoom.R;
 /**
  * Created by rossh_000 on 12/8/2014.
  */
-public class TimeListSampleContent {
+public class TimeListSampleContent extends View {
 
     /** An array of roomList items. */
     public static List<TimeListItem> ITEMS = new ArrayList<TimeListItem>();
@@ -45,6 +47,9 @@ public class TimeListSampleContent {
 
     }
 
+    public TimeListSampleContent(Context context) {
+        super(context);
+    }
 
 
     private static void addItem(TimeListItem item) {
