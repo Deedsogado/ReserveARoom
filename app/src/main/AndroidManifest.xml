@@ -27,7 +27,8 @@
         </activity>
         <activity
             android:name=".RoomVerifyActivity"
-            android:label="@string/title_activity_room_verify" >
+            android:label="@string/title_activity_room_verify"
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RoomListActivity" />
