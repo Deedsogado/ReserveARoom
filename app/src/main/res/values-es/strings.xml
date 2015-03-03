@@ -11,4 +11,7 @@
     <string name="scanner">Escáner</string>
     <string name="scanner_2">Escáner 2 del 3er piso</string>
     <string name="scanner_3">Escáner del 4° piso</string>
+    <string name="btnReserve">Reserva a hora!</string>
+    <string name="title_activity_room_verify"></string>
+    <string name="action_settings">Opciones</string>
 </resources>

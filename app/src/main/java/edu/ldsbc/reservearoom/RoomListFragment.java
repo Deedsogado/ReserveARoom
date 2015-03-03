@@ -44,9 +44,12 @@ public class RoomListFragment extends ListFragment {
      */
     public interface Callbacks {
         /**
-         * Callback for when an item has been selected.
+         * Callback for when an item has been selected. We can name the following method whatever
+         * we want, as long as we create that method in the containing activity (which has to implement
+         * RoomListFragment.Callbacks)
          */
-        public void onItemSelected(String id);
+
+        public void onRoomSelected(String id);
     }
 
     /**
@@ -55,7 +58,7 @@ public class RoomListFragment extends ListFragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onRoomSelected(String id) {
         }
     };
 
@@ -117,7 +120,8 @@ public class RoomListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(RoomListSampleContent.ITEMS.get(position).id);
+        mCallbacks.onRoomSelected(RoomListSampleContent.ITEMS.get(position).id);
+
     }
 
     @Override

@@ -1,13 +1,16 @@
 package edu.ldsbc.reservearoom;
 
-import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import edu.ldsbc.reservearoom.dummy.App;
 import edu.ldsbc.reservearoom.dummy.RoomListSampleContent;
 import edu.ldsbc.reservearoom.dummy.TimeAdapter;
 import edu.ldsbc.reservearoom.dummy.TimeListSampleContent;
@@ -38,6 +40,7 @@ public class RoomDetailFragment extends Fragment {
     Calendar cal = Calendar.getInstance();
     Date selectedDate = cal.getTime(); // will be Date for currently selected date. update inside onSelectDate();
     String selectedDateAsLong = "SelectedDateAsLong";
+
 
     /**
      * The fragment argument representing the item ID that this fragment
@@ -82,7 +85,8 @@ public class RoomDetailFragment extends Fragment {
             TextView roomDetailText = (TextView) getActivity().findViewById(R.id.room_detail);
             roomDetailText.setText(simpleDateFormat.format(date));
 
-            // TODO: add selected date to the bundle to be passed to the next fragment.
+            // Add selected date to bundle to be passed along later.
+            getActivity().getIntent().putExtra("vDate", simpleDateFormat.format(selectedDate));
 
         }
 
@@ -109,6 +113,9 @@ public class RoomDetailFragment extends Fragment {
             Toast.makeText(getActivity(),
                     "Caldroid view is created",
                     Toast.LENGTH_SHORT).show();
+
+            // Add selected date to bundle to be passed along later.
+            getActivity().getIntent().putExtra("vDate", simpleDateFormat.format(selectedDate));
         }
 
     };
@@ -148,14 +155,49 @@ public class RoomDetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_room_detail, container, false);
+        ListView listView = (ListView) rootView.findViewById(R.id.listView);
 
         // Show today's date in the TextView.
         ((TextView) rootView.findViewById(R.id.room_detail)).setText(simpleDateFormat.format(new Date()));
 
+        // Now make list items do things when clicked.
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id) {
+                // get actual object.
+                TimeListSampleContent.TimeListItem timeSlot = (TimeListSampleContent.TimeListItem) parent.getItemAtPosition(position);
+                // Only do things if the time is reservable.
+                if (timeSlot.reservable) {
+                    // prepare the time to pass in intent later.
+                    TextView textView = (TextView) itemClicked.findViewById(R.id.hour);
+                    String time = textView.getText().toString();
+                    // launch new activity to verify results of room, date, and time chosen.
+                    Intent launchVerifyActivity = new Intent(getActivity(), RoomVerifyActivity.class);
+                    Intent passedAlong = getActivity().getIntent();
+
+                    // on tablets, passedAlong was never passed (no new activity launched).
+                    // the selected room is in fragment's arguments instead of activity's bundle.
+
+                    launchVerifyActivity.putExtra("vRoom", RoomListSampleContent.ITEM_MAP.get(getArguments()
+                           .getString(RoomDetailFragment.ARG_ITEM_ID)).toString()); //Room
+
+                    launchVerifyActivity.putExtra("vDate",
+                            passedAlong.getStringExtra("vDate")); //added to passedAlong by listener.onSelectDate();
+
+                    launchVerifyActivity.putExtra("vTime",
+                            time);
+
+                    startActivity(launchVerifyActivity);
+                } else {
+                    Log.i("ReserveARoom", "Time is not reservable.");
+                }
+            }
+        });
+
         // Show items in the ListView
-        ((ListView) rootView.findViewById(R.id.listView)).setAdapter(new TimeAdapter<TimeListSampleContent.TimeListItem>(
+        listView.setAdapter(new TimeAdapter<TimeListSampleContent.TimeListItem>(
                 getActivity(),
                 R.layout.time_list_item, // id of the list item layout.
                 R.id.hour,  // id of textView inside our list item layout (hour)
@@ -170,9 +212,14 @@ public class RoomDetailFragment extends Fragment {
         args.putInt(CaldroidFragment.YEAR, cal.get(Calendar.YEAR));
 //        args.putBoolean(CaldroidFragment.SIX_WEEKS_IN_CALENDAR, false);
 //        args.putBoolean(CaldroidFragment.SQUARE_TEXT_VIEW_CELL, true);
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            args.putBoolean(CaldroidFragment.SQUARE_TEXT_VIEW_CELL, true);
+
+        }
         calDroid.setArguments(args);
 
         // Link caldroid in the fragment to the listener, either in RoomListActivity or RoomDetailActivity
+        //(actually it's defined in this file, not the activities.)
         calDroid.setCaldroidListener(listener);
 
         FragmentActivity act = (FragmentActivity) getActivity();
@@ -180,6 +227,8 @@ public class RoomDetailFragment extends Fragment {
                 .getSupportFragmentManager().beginTransaction();
         t.replace(R.id.calendar1, calDroid);
         t.commit();
+
+
 
 
 
