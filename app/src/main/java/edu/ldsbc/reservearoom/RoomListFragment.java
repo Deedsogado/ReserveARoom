@@ -21,6 +21,11 @@ import edu.ldsbc.reservearoom.dummy.RoomListSampleContent;
 public class RoomListFragment extends ListFragment {
 
     /**
+     * adapter to fill list from. remember to notifyDataSetChanged() if you update the RoomListSampleContent.Items list.
+     */
+    public static ArrayAdapter<RoomListSampleContent.RoomListItem> adapter;
+
+    /**
      * The serialization (saved instance state) Bundle key representing the
      * activated item position. Only used on tablets.
      */
@@ -73,12 +78,14 @@ public class RoomListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setListAdapter( new ArrayAdapter<RoomListSampleContent.RoomListItem>(
+
+         adapter = new ArrayAdapter<RoomListSampleContent.RoomListItem>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                RoomListSampleContent.ITEMS)); // Here is where we specify where the data is coming from.
+                RoomListSampleContent.ITEMS); // Here is where we specify where the data is coming from.
 
+        setListAdapter(adapter);
     }
 
 

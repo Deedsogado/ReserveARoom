@@ -124,7 +124,7 @@ public class RoomListSampleContent {
              // now start download from internet.
 
              InternetHelper ih = new InternetHelper();
-             ih.getCategories();
+
 
 
 
