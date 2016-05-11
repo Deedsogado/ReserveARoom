@@ -47,6 +47,7 @@ public class TimeListSampleContent extends View {
 
     }
 
+
     public TimeListSampleContent(Context context) {
         super(context);
     }

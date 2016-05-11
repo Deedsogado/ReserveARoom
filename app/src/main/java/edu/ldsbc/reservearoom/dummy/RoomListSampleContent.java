@@ -2,15 +2,25 @@ package edu.ldsbc.reservearoom.dummy;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteCursorDriver;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQuery;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 
+import java.io.IOException;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import edu.ldsbc.reservearoom.R;
+import edu.ldsbc.reservearoom.RoomDetailActivity;
+import edu.ldsbc.reservearoom.RoomDetailFragment;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -39,6 +49,7 @@ public class RoomListSampleContent {
 
         Resources res =  App.getContext().getResources();
 
+         /*
         // To update, simply replace "room_418" with the name of the string in res/values/strings.xml
         // Remember to correct the translations in this file as well.
         // Group Study Rooms (4th floor)
@@ -54,7 +65,7 @@ public class RoomListSampleContent {
         // Under Development (Do Not Use)
         addItem(new RoomListItem("9", res.getString(R.string.test_room)));
 
-
+*/
         // TODO: The following:
          /* Use AsyncHttpClient and JSoup to:
           * 1. pull first webpage,
@@ -84,14 +95,54 @@ public class RoomListSampleContent {
          // Since the database will have content in it every time after the first time, it will not
          // ask for the list from the server again.  Fix by either having it dump the database every
          // two weeks, or by having a re-sync option in the action bar overflow, or both.  */
+
+         DatabaseHelper dbh = new DatabaseHelper();
+         dbh.deleteAllRooms();
+         if (!dbh.isEmpty()) {
+             deleteAllItems(); // from list, not from database.
+             ArrayList<String> list = dbh.getAllRooms();
+             for (int i = 0; i < list.size(); i++) { // for each room in database,
+                 addItem(new RoomListItem(i, list.get(i))); // add it to the RoomList, which will be displayed in textView.
+             }
+         } else {
+             /*
+            // populate fake list, and download from internet.
+             addItem(new RoomListItem("1", res.getString(R.string.room_418)));
+             addItem(new RoomListItem("2", res.getString(R.string.room_419)));
+             addItem(new RoomListItem("3", res.getString(R.string.room_420)));
+             addItem(new RoomListItem("4", res.getString(R.string.room_421)));
+             addItem(new RoomListItem("5", res.getString(R.string.scanner)));
+             // Scanners
+             addItem(new RoomListItem("6", res.getString(R.string.scanner_1)));
+             addItem(new RoomListItem("7", res.getString(R.string.scanner_2)));
+             addItem(new RoomListItem("8", res.getString(R.string.scanner_3)));
+             // Under Development (Do Not Use)
+             addItem(new RoomListItem("9", res.getString(R.string.test_room)));
+*/
+
+
+             // now start download from internet.
+
+             InternetHelper ih = new InternetHelper();
+             ih.getCategories();
+
+
+
+         }
+
+
     }
 
 
 
-
-    private static void addItem(RoomListItem item) {
+    public static void addItem(RoomListItem item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
+    }
+
+    public static void deleteAllItems(){
+        ITEMS.clear();
+        ITEM_MAP.clear();
     }
 
     /** A roomList item representing a piece of content. */
