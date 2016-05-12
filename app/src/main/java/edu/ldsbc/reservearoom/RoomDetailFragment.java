@@ -19,10 +19,12 @@ import android.widget.Toast;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import edu.ldsbc.reservearoom.dummy.InternetHelper;
 import edu.ldsbc.reservearoom.dummy.RoomListSampleContent;
 import edu.ldsbc.reservearoom.dummy.TimeAdapter;
 import edu.ldsbc.reservearoom.dummy.TimeListSampleContent;
@@ -41,6 +43,7 @@ public class RoomDetailFragment extends Fragment {
     Date selectedDate = cal.getTime(); // will be Date for currently selected date. update inside onSelectDate();
     String selectedDateAsLong = "SelectedDateAsLong";
 
+    public static TimeAdapter<TimeListSampleContent.TimeListItem> timeAdapter; // where times are stored. remember to notifyDataSetChanged().
 
     /**
      * The fragment argument representing the item ID that this fragment
@@ -61,6 +64,7 @@ public class RoomDetailFragment extends Fragment {
     }
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM'. 'dd"); // Dec. 4
+    SimpleDateFormat yearMonthDayFormat = new SimpleDateFormat("yyyy.M.d"); // 2016.12.4
 
 
     /** Create listener for Caldroid. not declared in activity because methods are overloaded
@@ -87,6 +91,14 @@ public class RoomDetailFragment extends Fragment {
 
             // Add selected date to bundle to be passed along later.
             getActivity().getIntent().putExtra("vDate", simpleDateFormat.format(selectedDate));
+
+            // update times in listview for current date.
+            // update times for current room
+            String name = RoomListSampleContent.ITEM_MAP.get(getArguments().
+                    getString(RoomDetailFragment.ARG_ITEM_ID)).toString();
+
+
+            InternetHelper.getRoomTimes(name, yearMonthDayFormat.format(selectedDate));
 
         }
 
@@ -197,13 +209,23 @@ public class RoomDetailFragment extends Fragment {
         });
 
         // Show items in the ListView
-        listView.setAdapter(new TimeAdapter<TimeListSampleContent.TimeListItem>(
+        timeAdapter =
+        new TimeAdapter<TimeListSampleContent.TimeListItem>(
                 getActivity(),
                 R.layout.time_list_item, // id of the list item layout.
                 R.id.hour,  // id of textView inside our list item layout (hour)
                 R.id.reservable,
                 R.id.plus,
-                TimeListSampleContent.ITEMS)); // Here is where we specify where the data is coming from.
+                TimeListSampleContent.ITEMS); // Here is where we specify where the data is coming from.
+
+        listView.setAdapter(timeAdapter);
+
+        // update times for current room
+        String name = RoomListSampleContent.ITEM_MAP.get(getArguments().
+                getString(RoomDetailFragment.ARG_ITEM_ID)).toString();
+
+
+        InternetHelper.getRoomTimes(name, yearMonthDayFormat.format(selectedDate));
 
         // Show Calendar and time in top bar of Caldroid.
         // Actually, this is simply telling Caldroid what today's month and day is when it launches.

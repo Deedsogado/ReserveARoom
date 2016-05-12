@@ -1,26 +1,9 @@
 package edu.ldsbc.reservearoom.dummy;
 
-import android.content.Context;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteCursorDriver;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQuery;
-import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
-
-import java.io.IOException;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import edu.ldsbc.reservearoom.R;
-import edu.ldsbc.reservearoom.RoomDetailActivity;
-import edu.ldsbc.reservearoom.RoomDetailFragment;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -97,13 +80,19 @@ public class RoomListSampleContent {
          // two weeks, or by having a re-sync option in the action bar overflow, or both.  */
 
          DatabaseHelper dbh = new DatabaseHelper();
-         dbh.deleteAllRooms();
+
          if (!dbh.isEmpty()) {
              deleteAllItems(); // from list, not from database.
              ArrayList<String> list = dbh.getAllRooms();
              for (int i = 0; i < list.size(); i++) { // for each room in database,
                  addItem(new RoomListItem(i, list.get(i))); // add it to the RoomList, which will be displayed in textView.
              }
+
+             //now that we have displayed the list for the user, check the website for any changes. Takes roughly 7 seconds.
+             InternetHelper.getRoomListNames();
+
+
+
          } else {
              /*
             // populate fake list, and download from internet.
@@ -121,10 +110,8 @@ public class RoomListSampleContent {
 */
 
 
-             // now start download from internet.
-
-             InternetHelper ih = new InternetHelper();
-
+             // The database is empty.  Start download from internet.
+             InternetHelper.getRoomListNames();
 
 
 

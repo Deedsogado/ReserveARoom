@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -58,6 +59,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_NAME, roomName);
 
         db.insert(TABLE_ROOMS,null,cv);
+
+        Log.i("Database", "inserting " + roomName + " into Database. ");
     }
 
     public ArrayList<String> getAllRooms() {
@@ -70,6 +73,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         while(res.isAfterLast() == false) {
             list.add(res.getString(res.getColumnIndex(COL_NAME)));
+
+            Log.i("Database", "Loading " + res.getString(res.getColumnIndex(COL_NAME)) + " from database.");
+
             res.moveToNext();
         }
         res.close();
@@ -82,6 +88,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      //   Cursor res = db.rawQuery("DELETE FROM " + TABLE_ROOMS + ";", null);
      //   res.close();
         db.delete(TABLE_ROOMS, null, null); // deletes all rows in table.
+
+        Log.i("Database", "deleting all records from database. ");
     }
 
     /**
@@ -95,8 +103,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         res.close();
         int amount = Integer.parseInt(temp);
-        return (amount == 0);
 
+
+        if (amount == 0) {
+            Log.i("Database", "Database is empty. ");
+            return (true);
+        } else {
+            Log.i("Database", "Database has rooms in it. ");
+            return (false);
+        }
     }
 
 }
