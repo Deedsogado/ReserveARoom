@@ -31,16 +31,14 @@ public class RoomListFragment extends ListFragment {
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-    /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
-     */
-    private Callbacks mCallbacks = sDummyCallbacks;
+
 
     /**
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -68,6 +66,11 @@ public class RoomListFragment extends ListFragment {
     };
 
     /**
+     * The fragment's current callback object, which is notified of list item
+     * clicks.
+     */
+    private static Callbacks mCallbacks = sDummyCallbacks;
+    /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
@@ -79,7 +82,7 @@ public class RoomListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
 
-         adapter = new ArrayAdapter<RoomListSampleContent.RoomListItem>(
+        adapter = new ArrayAdapter<RoomListSampleContent.RoomListItem>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
@@ -87,7 +90,6 @@ public class RoomListFragment extends ListFragment {
 
         setListAdapter(adapter);
     }
-
 
 
     @Override
@@ -153,7 +155,7 @@ public class RoomListFragment extends ListFragment {
     }
 
 
-    private void setActivatedPosition(int position) {
+    public void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION) {
             getListView().setItemChecked(mActivatedPosition, false);
         } else {
@@ -162,4 +164,14 @@ public class RoomListFragment extends ListFragment {
 
         mActivatedPosition = position;
     }
+
+    public static void chooseItem(int position) {
+        if (RoomListActivity.isTwoPaneMode()) {
+            RoomListActivity.getRoomListFragment().setActivatedPosition(position);
+            mCallbacks.onRoomSelected(RoomListSampleContent.ITEMS.get(position).id);
+
+        }
+    }
+
+
 }

@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import edu.ldsbc.reservearoom.dummy.App;
 import edu.ldsbc.reservearoom.dummy.RoomListSampleContent;
 
 
@@ -28,7 +29,6 @@ public class RoomVerifyActivity extends Activity {
         getActionBar().setTitle(getIntent().getStringExtra("vRoom"));
 
 
-
         TextView verifyDateTextView = (TextView) findViewById(R.id.verify_date_textview);
         TextView verifyTimeTextView = (TextView) findViewById(R.id.verify_time_textview);
         Spinner verifyDurationSpinner = (Spinner) findViewById(R.id.verify_duration_spinner);
@@ -43,8 +43,8 @@ public class RoomVerifyActivity extends Activity {
 
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-         ArrayAdapter<CharSequence> durationSpinnerAdapter = ArrayAdapter.createFromResource(this,
-         R.array.durations, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> durationSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.durations, android.R.layout.simple_spinner_item);
 
         // Specify the layout to use when the list of choices appears
         durationSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -55,8 +55,9 @@ public class RoomVerifyActivity extends Activity {
     }
 
     public boolean onFinalReserve(View view) {
-        Log.i("ReserveARoom","Final Reserve Button Pressed");
-
+        if (App.DEBUG_MODE) {
+            Log.i("ReserveARoom", "Final Reserve Button Pressed");
+        }
         return true;
     }
 
@@ -88,5 +89,5 @@ public class RoomVerifyActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
- }
+    }
 }

@@ -3,6 +3,8 @@ package edu.ldsbc.reservearoom;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ListFragment;
+import android.widget.ListView;
 import android.widget.TextView;
 
 
@@ -29,7 +31,9 @@ public class RoomListActivity extends FragmentActivity
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
-    private boolean mTwoPane;
+    private static boolean mTwoPane = false;
+
+    private static RoomListFragment listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +47,15 @@ public class RoomListActivity extends FragmentActivity
             // activity should be in two-pane mode.
             mTwoPane = true;
 
+            listView = (RoomListFragment) getSupportFragmentManager().findFragmentById(R.id.room_list);
+
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
             ((RoomListFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.room_list))
                     .setActivateOnItemClick(true);
         }
+
 
         // TODO: If exposing deep links into your app, handle intents here.
 
@@ -80,5 +87,16 @@ public class RoomListActivity extends FragmentActivity
             detailIntent.putExtra(RoomDetailFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
+    }
+
+    public static boolean isTwoPaneMode(){
+
+        return mTwoPane;
+    }
+
+    public static RoomListFragment getRoomListFragment() {
+
+            return listView;
+
     }
 }

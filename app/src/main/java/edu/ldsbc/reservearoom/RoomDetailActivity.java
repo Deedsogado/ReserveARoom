@@ -51,8 +51,8 @@ public class RoomDetailActivity extends FragmentActivity {
             RoomDetailFragment fragment = new RoomDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-             .add(R.id.room_detail_container, fragment)
-             .commit();
+                    .add(R.id.room_detail_container, fragment)
+                    .commit();
         }
     }
 
