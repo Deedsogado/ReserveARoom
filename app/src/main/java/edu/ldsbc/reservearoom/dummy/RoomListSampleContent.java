@@ -1,16 +1,9 @@
 package edu.ldsbc.reservearoom.dummy;
 
-import android.content.Context;
 import android.content.res.Resources;
-
-import com.loopj.android.http.AsyncHttpClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import edu.ldsbc.reservearoom.R;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -26,72 +19,69 @@ public class RoomListSampleContent {
     /** A map of roomList items, by ID. */
     public static HashMap<String, RoomListItem> ITEM_MAP = new HashMap<String, RoomListItem>();
 
-    /* The adapter is never constructed or called, it's ITEMS list is just accessed.
+    /* The adapter is never constructed or called, the ITEMS list is just accessed.
    * that's why it's empty when we run the app. so, we put database and network calls
    * inside the static {}.
    * */
 
      static {
-        // Add items here.
-        // addItem(new RoomListItem("1", "Item 1"));
-        // addItem(new RoomListItem("2", "Item 2"));
-        // addItem(new RoomListItem("3", "Item 3"));
-
         Resources res =  App.getContext().getResources();
-
-        // To update, simply replace "room_418" with the name of the string in res/values/strings.xml
-        // Remember to correct the translations in this file as well.
-        // Group Study Rooms (4th floor)
-        addItem(new RoomListItem("1", res.getString(R.string.room_418)));
-        addItem(new RoomListItem("2", res.getString(R.string.room_419)));
-        addItem(new RoomListItem("3", res.getString(R.string.room_420)));
-        addItem(new RoomListItem("4", res.getString(R.string.room_421)));
-        addItem(new RoomListItem("5", res.getString(R.string.scanner)));
-        // Scanners
-        addItem(new RoomListItem("6", res.getString(R.string.scanner_1)));
-        addItem(new RoomListItem("7", res.getString(R.string.scanner_2)));
-        addItem(new RoomListItem("8", res.getString(R.string.scanner_3)));
-        // Under Development (Do Not Use)
-        addItem(new RoomListItem("9", res.getString(R.string.test_room)));
-
-
-        // TODO: The following:
-         /* Use AsyncHttpClient and JSoup to:
-          * 1. pull first webpage,
-          * 2. extract the options, save the options to a static list,
-          * 3. pull the webpages based on the options,
-          * 4. extract the names, save each as a RoomListItem
-          *
-          * We will do steps 1 and 2 procedurally, and steps 3 and 4
-          * in a loop based on the number of options.  */
-
 
          //* We need to fill in the list in these steps to make the app appear fast.
          // Loading data from database is slow. loading from Server is slower. do both asynchronously,
          // after displaying sample list.
          // 1. Check if a previous list has been added to the database
          //      If so, display the list from the database.
+         //         begin downloading a fresh copy from the server.
+         //         when fresh copy arrives, save it to database and display it.
          //      If not, it means that we have never downloaded a list before, and this is the very
-         //          first time the app has launched.
-         //      Display a sample content list so the app doesn't appear to be frozen.
-         //      Begin downloading the list from the server on a separate thread, so it doesn't freeze
-         //          the menu, and save it to the database. First get the list of each section, then
-         //          get the rooms from each section page.
-         //      When the downloaded list is saved to the database, run step 1 again. Call it manually,
-         //      not in a loop, because we don't know how how slow the network is, and don't want to
-         //      create a paradox.
-         //
-         // Since the database will have content in it every time after the first time, it will not
-         // ask for the list from the server again.  Fix by either having it dump the database every
-         // two weeks, or by having a re-sync option in the action bar overflow, or both.  */
+         //             first time the app has launched.
+         //         Display a sample content list so the app doesn't appear to be frozen.
+         //         Begin downloading the list from the server on a separate thread, so it doesn't freeze
+         //             the menu, and save it to the database. First get the list of each section, then
+         //             get the rooms from each section page.
+         //         Goto step 1.
+
+         // get this app's MySql database.
+         DatabaseHelper dbh = new DatabaseHelper();
+
+         if (!dbh.isEmpty()) { // if the database is not empty, or is full,
+             deleteAllItems(); // delete dummy items from sample list, not from database.
+             ArrayList<String> list = dbh.getAllRooms(); // load list from database.
+             for (int i = 0; i < list.size(); i++) { // for each room in database,
+                 addItem(new RoomListItem(i, list.get(i))); // add it to the RoomList, which will be displayed in textView.
+             }
+
+             //now that we have displayed the list for the user, check the website for any changes.
+             // Takes roughly 3 seconds, but happens on background thread.
+             InternetHelper.getRoomCategories();
+
+         } else { // database is empty.  this is the first time the app was launched.
+
+             // populate fake list, and download from internet.
+             addItem(new RoomListItem("1", "Downloading from Server,"));
+             addItem(new RoomListItem("2", "Please wait..."));
+
+             // The database is empty.  Start download from internet.
+             InternetHelper.getRoomCategories();
+         }
     }
 
-
-
-
-    private static void addItem(RoomListItem item) {
+    /**
+     * Adds RoomListItem into the list. Remember to notify listview.
+     * @param item room to add to listview.
+     */
+    public static void addItem(RoomListItem item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
+    }
+
+    /**
+     * Remove all items from list.
+     */
+    public static void deleteAllItems(){
+        ITEMS.clear();
+        ITEM_MAP.clear();
     }
 
     /** A roomList item representing a piece of content. */
@@ -99,23 +89,35 @@ public class RoomListSampleContent {
         public String id;
         public String content;
 
-        // overloaded constructor for strings, strings
+        /**
+         * overloaded constructor for string, string
+         */
         public RoomListItem(String id, String content) {
             this.id = id;
             this.content = content;
         }
 
-        // overloaded constructor for int, strings
-        public RoomListItem(int id, String content) {
+        /**
+         * overloaded constructor for int, string
+         */
+         public RoomListItem(int id, String content) {
             this.id = String.valueOf(id);
             this.content = content;
         }
 
+        /**
+         * Get the item in the index position.
+         * @param position
+         * @return returns the RoomListItem in the given index.
+         */
         public static RoomListItem get(int position) {
-
             return ITEM_MAP.get(((Integer)position).toString());
         }
 
+        /**
+         * Get name of the room.
+         * @return
+         */
         @Override
         public String toString() {
             return content;
