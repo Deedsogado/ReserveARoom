@@ -404,7 +404,7 @@ public class TimeAdapter<T> extends BaseAdapter implements Filterable {
         T item = getItem(position); // returns TimeListSampleContent.TimeListItem
         if (item instanceof CharSequence) { //it won't be.
             text.setText((CharSequence)item);
-        } else {
+        } else { // populate the listView with the fields from our TimeListItems.
             text.setText(((TimeListSampleContent.TimeListItem)item).toString(1));
             text2.setText(((TimeListSampleContent.TimeListItem)item).toString(2));
             text3.setText(((TimeListSampleContent.TimeListItem)item).toString(3));
