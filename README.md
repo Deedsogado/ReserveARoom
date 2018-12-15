@@ -8,24 +8,24 @@ Android app to reserve rooms in LDSBC library. Project on Hiatus, to be further 
 ## Phones 
 Room list
 <br/>
-![alt text](https://github.com/Deedsogado/BobAwesome/blob/master/roomlist.png "List of rooms")
+![alt text](https://github.com/Deedsogado/ReserveARoom/blob/master/roomlist.png "List of rooms")
 
 Date and time picker. 
 <br/>
-![alt text](https://github.com/Deedsogado/BobAwesome/blob/master/datepicker.png "Date and time picker")
+![alt text](https://github.com/Deedsogado/ReserveARoom/blob/master/datepicker.png "Date and time picker")
 
 Final reservation screen
 <br/>
-![alt text](https://github.com/Deedsogado/BobAwesome/blob/master/reserve.png "Reserve")
+![alt text](https://github.com/Deedsogado/ReserveARoom/blob/master/reserve.png "Reserve")
 
 ## Tablets
 Room list and Date and Time picker. Uses fragments to place different objectives on a singal activity screen. 
 <br/>
-![alt text](https://github.com/Deedsogado/BobAwesome/blob/master/datepickertablet.png "List of rooms with Date and Time picker side by side")
+![alt text](https://github.com/Deedsogado/ReserveARoom/blob/master/datepickertablet.png "List of rooms with Date and Time picker side by side")
 
 Final reservation screen
 <br/>
-![alt text](https://github.com/Deedsogado/BobAwesome/blob/master/reservetablet.png "Reserve")
+![alt text](https://github.com/Deedsogado/ReserveARoom/blob/master/reservetablet.png "Reserve")
 
 
 ## links for future devs
